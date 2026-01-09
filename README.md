@@ -112,7 +112,7 @@ npm run type-check
 app/
   page.tsx                 # Landing page
   dashboard/page.tsx       # Auth-protected dashboard
-  notes/edit/[id]/page.tsx # Edit note page
+  
   api/
     auth/
       session/route.ts     # Create session cookie
@@ -121,7 +121,7 @@ app/
     notes/
       route.ts             # Create/list notes
       [id]/route.ts        # GET/DELETE note
-      edit/[id]/route.ts   # PATCH update note
+      
 components/
   Navbar.tsx
   NotesGrid.tsx

@@ -14,8 +14,9 @@ async function verifyAuth(req: Request) {
   }
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(req: Request, context: { params: { id: string } | Promise<{ id: string }> }) {
+  const { params } = context;
+  const { id } = await params;
   try {
     if (!adminInitialized) {
       return NextResponse.json(
@@ -58,7 +59,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, context: { params: { id: string } | Promise<{ id: string }> }) {
+  const { params } = context;
   const { id } = await params;
   try {
     if (!admin.apps.length) {
