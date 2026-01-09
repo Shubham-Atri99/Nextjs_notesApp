@@ -13,6 +13,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+ 
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState<string | null>(null);
+  const [forgotSuccess, setForgotSuccess] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -31,6 +38,38 @@ export default function LoginPage() {
       setError(err?.message || "Failed to sign in.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleForgotSubmit = async () => {
+    setForgotError(null);
+    setForgotSuccess(null);
+
+    const emailToUse = forgotEmail.trim() || email.trim();
+    if (!emailToUse) {
+      setForgotError("Please enter an email address.");
+      return;
+    }
+
+    setForgotLoading(true);
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailToUse }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setForgotError(data?.error || "Failed to send reset email.");
+      } else {
+        setForgotSuccess(data?.message || "Password reset email sent.");
+      }
+    } catch (err) {
+      console.error(err);
+      setForgotError("Internal error, please try again later.");
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -93,6 +132,48 @@ export default function LoginPage() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        
+        <div className="mt-4 text-sm text-center">
+          <button
+            type="button"
+            onClick={() => setShowForgot((s) => !s)}
+            className="text-blue-500 hover:underline"
+          >
+            Forgot password?
+          </button>
+        </div>
+
+        {showForgot && (
+          <div className="mt-4 rounded-md border border-gray-100 bg-gray-50 p-4">
+            <p className="mb-2 text-sm text-gray-700">Enter your email to receive a password reset link.</p>
+            {forgotError && (
+              <div className="mb-2 rounded-md bg-red-50 p-2 text-sm text-red-700">{forgotError}</div>
+            )}
+            {forgotSuccess && (
+              <div className="mb-2 rounded-md bg-green-50 p-2 text-sm text-green-700">{forgotSuccess}</div>
+            )}
+
+            <div className="flex gap-2">
+              <input
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                type="email"
+                placeholder="your@email.com"
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 placeholder-gray-400 bg-white"
+              />
+              <button
+                onClick={handleForgotSubmit}
+                disabled={forgotLoading}
+                className={`rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition ${
+                  forgotLoading ? "opacity-60" : "hover:bg-blue-600"
+                }`}
+              >
+                {forgotLoading ? "Sending..." : "Send"}
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="my-6 flex items-center gap-2">
           <div className="h-px flex-1 bg-gray-200" />

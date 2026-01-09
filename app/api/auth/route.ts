@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-const firebaseApiKey = process.env.FIREBASE_API_KEY;
+const firebaseApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
 export async function POST(req: Request) {
   try {
