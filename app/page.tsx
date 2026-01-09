@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import AuthAwareCTA from "@/components/AuthAwareCTA";
 
 export default function HomePage() {
   return (
@@ -17,7 +18,7 @@ export default function HomePage() {
         className="relative z-10 flex items-center justify-between px-10 py-6"
       >
         <div className="flex items-center gap-2 text-xl font-semibold">
-          📘 <span>NotesApp</span>
+          📘 <span  className=" text-gray-700">NotesApp</span>
         </div>
 
         <div className="flex items-center gap-6">
@@ -77,19 +78,7 @@ export default function HomePage() {
           transition={{ delay: 0.6 }}
           className="mt-10 flex flex-col gap-4 sm:flex-row"
         >
-          <Link
-            href="/register"
-            className="group flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-8 py-4 text-lg font-medium text-white shadow-lg transition hover:scale-105 hover:bg-blue-600"
-          >
-            Start Taking Notes
-            <span className="transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
-
-          <button className="rounded-xl border border-gray-300 px-8 py-4 text-lg font-medium text-gray-700 transition hover:bg-gray-100 hover:shadow">
-            View Demo Dashboard
-          </button>
+          <AuthAwareCTA />
         </motion.div>
 
         

@@ -44,7 +44,18 @@ export default function RegisterPage() {
         email: user.email,
       });
 
-      router.push("/login");
+      try {
+        const idToken = await user.getIdToken();
+        await fetch("/api/auth/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        });
+      } catch (e) {
+        console.warn("Failed to create session cookie after register:", e);
+      }
+
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err?.message || "Failed to create account.");
     } finally {

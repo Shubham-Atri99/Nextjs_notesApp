@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
 
 export default function Navbar() {
   const [name, setName] = useState<string | null>(null);
@@ -60,17 +62,39 @@ export default function Navbar() {
     };
   }, []);
 
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+      } catch (e) {
+        console.warn("Failed to call /api/auth/logout:", e);
+      }
+      setName(null);
+    } catch (e) {
+      console.error("Failed to sign out:", e);
+    }
+  };
+
   return (
     <header className="flex items-center justify-between border-b bg-white px-8 py-4">
-      <div className="flex items-center gap-2 text-lg font-semibold text-blue-600">
+      <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-blue-600">
         📘 NotesApp
-      </div>
+      </Link>
 
       <div className="flex items-center gap-3">
         <div className="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center">
           👤
         </div>
         <span className="text-sm font-medium text-gray-700">{name || "Guest"}</span>
+        {auth.currentUser ? (
+          <button
+            onClick={logout}
+            className="ml-3 rounded bg-red-50 px-3 py-1 text-sm font-medium text-red-600 hover:bg-red-100"
+          >
+            Logout
+          </button>
+        ) : null}
       </div>
     </header>
   );

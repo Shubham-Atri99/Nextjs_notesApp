@@ -67,7 +67,7 @@ export default function NotesCard({ note, onDelete }: NotesCardProps) {
   };
 
   return (
-    <div className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition">
+    <div className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col h-full">
       <h4 className="mb-2 font-semibold text-gray-900">{note.title}</h4>
 
       
@@ -85,10 +85,10 @@ export default function NotesCard({ note, onDelete }: NotesCardProps) {
         </button>
       )}
 
-      <div className="flex items-center gap-2 text-xs text-gray-500 justify-between">
+      <div className="flex items-center gap-2 text-xs text-gray-500 justify-between mt-auto">
         <div className="flex items-center gap-2">📅 {formatCreatedAt(note.created_at ?? note.createdAt)}</div>
 
-        <div>
+        <div className="flex items-center">
           <button
             onClick={handleDelete}
             disabled={deleting}

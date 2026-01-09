@@ -31,7 +31,21 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCred.user;
+      const idToken = await user.getIdToken();
+
+      // create server-side session cookie (1 day)
+      try {
+        await fetch("/api/auth/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        });
+      } catch (e) {
+        console.warn("Failed to create session cookie:", e);
+      }
+
       router.push("/dashboard");
     } catch (err: any) {
       console.error(err);
