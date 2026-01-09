@@ -77,7 +77,7 @@ export default function DashboardPage() {
       <main className="mx-auto max-w-7xl px-6 py-8 space-y-10">
         <CreateNote onAdd={fetchNotes} />
         <NotesToolbar />
-        <NotesGrid notes={notes} />
+        <NotesGrid notes={notes} onDelete={fetchNotes} />
       </main>
     </div>
   );

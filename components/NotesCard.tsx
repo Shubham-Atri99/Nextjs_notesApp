@@ -1,10 +1,12 @@
+import React, { useState } from "react";
 import type { Note as NoteType } from "@/Types/Note";
 
 interface NotesCardProps {
   note: NoteType;
+  onDelete?: () => void;
 }
 
-export default function NotesCard({ note }: NotesCardProps) {
+export default function NotesCard({ note, onDelete }: NotesCardProps) {
   const formatCreatedAt = (createdAt: any) => {
     if (!createdAt) return "";
     // ISO string (from server)
@@ -25,14 +27,76 @@ export default function NotesCard({ note }: NotesCardProps) {
     return String(createdAt);
   };
 
+  const [expanded, setExpanded] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const MAX_PREVIEW = 400;
+  const isLong = (note.content || "").length > MAX_PREVIEW;
+  const preview = isLong ? note.content.slice(0, MAX_PREVIEW) + "..." : note.content;
+
+  const handleDelete = async () => {
+    if (!confirm("Delete this note?")) return;
+    try {
+      const { auth } = await import("@/lib/firebase");
+      const user = auth.currentUser;
+      if (!user) {
+        alert("You must be signed in to delete notes.");
+        return;
+      }
+
+      const token = await user.getIdToken();
+      setDeleting(true);
+
+      const res = await fetch(`/api/notes/${note.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.error(data);
+        alert(data?.error || "Failed to delete note");
+        return;
+      }
+
+      if (onDelete) onDelete();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to delete note");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition">
       <h4 className="mb-2 font-semibold text-gray-900">{note.title}</h4>
-      <p className="mb-4 text-sm text-gray-600 line-clamp-3">
-        {note.content}
+
+      
+      <p className="mb-3 text-sm text-gray-600 whitespace-pre-wrap break-words max-w-full">
+        {expanded ? note.content : preview}
       </p>
-      <div className="flex items-center gap-2 text-xs text-gray-500">
-        📅 {formatCreatedAt(note.created_at ?? note.createdAt)}
+
+      {isLong && (
+        <button
+          onClick={() => setExpanded((s) => !s)}
+          className="mb-3 text-xs text-blue-500 hover:underline"
+          aria-expanded={expanded}
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      )}
+
+      <div className="flex items-center gap-2 text-xs text-gray-500 justify-between">
+        <div className="flex items-center gap-2">📅 {formatCreatedAt(note.created_at ?? note.createdAt)}</div>
+
+        <div>
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className={`text-xs ${deleting ? "text-gray-400" : "text-red-500 hover:underline"}`}
+          >
+            {deleting ? "Deleting..." : "Delete"}
+          </button>
+        </div>
       </div>
     </div>
   );
