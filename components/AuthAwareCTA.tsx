@@ -46,7 +46,7 @@ export default function AuthAwareCTA() {
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className={`group flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-lg font-medium text-white shadow-lg transition ${
+      className={`group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-medium text-white shadow-lg transition ${
         loading ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-600 hover:scale-105"
       }`}
     >

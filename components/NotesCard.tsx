@@ -85,14 +85,14 @@ export default function NotesCard({ note, onDelete }: NotesCardProps) {
         </button>
       )}
 
-      <div className="flex items-center gap-2 text-xs text-gray-500 justify-between mt-auto">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs text-gray-500 justify-between mt-auto">
         <div className="flex items-center gap-2">📅 {formatCreatedAt(note.created_at ?? note.createdAt)}</div>
 
-        <div className="flex items-center">
+        <div className="w-full sm:w-auto flex items-center">
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className={`text-xs ${deleting ? "text-gray-400" : "text-red-500 hover:underline"}`}
+            className={`w-full sm:w-auto text-center text-xs ${deleting ? "text-gray-400" : "text-red-500 hover:underline"}`}
           >
             {deleting ? "Deleting..." : "Delete"}
           </button>
