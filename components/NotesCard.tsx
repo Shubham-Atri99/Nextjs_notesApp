@@ -7,11 +7,21 @@ interface NotesCardProps {
 export default function NotesCard({ note }: NotesCardProps) {
   const formatCreatedAt = (createdAt: any) => {
     if (!createdAt) return "";
-    if (typeof createdAt?.toDate === "function")
-      return createdAt.toDate().toLocaleDateString();
-    if (createdAt?.seconds)
-      return new Date(createdAt.seconds * 1000).toLocaleDateString();
-    if (createdAt instanceof Date) return createdAt.toLocaleDateString();
+    // ISO string (from server)
+    if (typeof createdAt === "string") {
+      const t = Date.parse(createdAt);
+      if (!Number.isNaN(t)) return new Date(t).toLocaleString();
+      return createdAt;
+    }
+
+    if (typeof createdAt?.toDate === "function") {
+      return createdAt.toDate().toLocaleString();
+    }
+
+    if (createdAt?.seconds) return new Date(createdAt.seconds * 1000).toLocaleString();
+
+    if (createdAt instanceof Date) return createdAt.toLocaleString();
+
     return String(createdAt);
   };
 
@@ -22,7 +32,7 @@ export default function NotesCard({ note }: NotesCardProps) {
         {note.content}
       </p>
       <div className="flex items-center gap-2 text-xs text-gray-500">
-        📅 {formatCreatedAt(note.createdAt)}
+        📅 {formatCreatedAt(note.created_at ?? note.createdAt)}
       </div>
     </div>
   );
